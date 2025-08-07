@@ -49,7 +49,7 @@ exports.getUserDesignsByID = async (req, res) => {
 exports.saveDesign = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { designId, name, canvasData, width, height, category } = req.body;
+    const { designId, name, canvasData, width, height, category, templateId } = req.body;
     if (designId) {
       const design = await Design.findOne({ _id: designId, userId });
       if (!design) {
@@ -64,7 +64,8 @@ exports.saveDesign = async (req, res) => {
       if (width) design.width = width;
       if (height) design.height = height;
       if (category) design.category = category;
-
+      if (templateId) design.templateId = templateId;
+      
       design.updatedAt = Date.now();
       const updatedDesign = await design.save();
 
@@ -80,6 +81,7 @@ exports.saveDesign = async (req, res) => {
         height,
         canvasData,
         category,
+        templateId
       });
 
       const saveDesign = await newDesign.save();
