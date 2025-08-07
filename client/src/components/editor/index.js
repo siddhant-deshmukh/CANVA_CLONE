@@ -9,6 +9,7 @@ import { useEditorStore } from "@/store";
 import { getUserDesignByID, getUserTemplateByID } from "@/services/design-service";
 import Properties from "./properties";
 import SubscriptionModal from "../subscription/premium-modal";
+import EditPropertiesInlineEditor from "./EditProperTiesInlineEditor";
 
 function MainEditor() {
   const params = useParams();
@@ -87,6 +88,13 @@ function MainEditor() {
           let response = await getUserTemplateByID(templateId);
           console.log('get template by ID', response)
           template = response.data;
+        } else {
+          const templateCanvasDataObject = JSON.parse(template.canvasData);
+          if (!Array.isArray(templateCanvasDataObject.objects) || templateCanvasDataObject.objects.length < 1) {
+            let response = await getUserTemplateByID(templateId);
+            console.log('get template by ID', response)
+            template = response.data;
+          }
         }
       } else {
         let response = await getUserTemplateByID(templateId);
@@ -100,8 +108,8 @@ function MainEditor() {
         setName(template.name);
 
         //set the template ID just incase after getting the data
-        if(templateId) setTemplateId(templateId);
-        if(designId) setDesignId(designId);
+        if (templateId) setTemplateId(templateId);
+        if (designId) setDesignId(designId);
 
         try {
           if (template.canvasData) {
@@ -136,11 +144,11 @@ function MainEditor() {
               .loadFromJSON(template.canvasData)
               .then((canvas) => {
                 canvas.requestRenderAll();
-                if(designId){
+                if (designId) {
                   canvas.forEachObject(function (obj) {
                     // obj.selectable = false;
                     // obj.evented = false;
-                    if(obj.type !== "i-text") {
+                    if (obj.type !== "i-text") {
                       obj.lockMovementX = true;
                       obj.lockMovementY = true;
                       obj.lockScalingX = true;
@@ -150,7 +158,7 @@ function MainEditor() {
                       obj.hoverCursor = 'pointer';
                       obj.moveCursor = 'pointer';
                     } else {
-                      obj.hoverCursor = 'move';  
+                      obj.hoverCursor = 'move';
                       obj.moveCursor = 'move';
                     }
                     obj.hasBorders = true;
@@ -227,7 +235,8 @@ function MainEditor() {
           </main>
         </div>
       </div>
-      {showProperties && !designId && isEditing  && <Properties />}
+      {showProperties && !designId && isEditing && <Properties />}
+      { designId && isEditing && <EditPropertiesInlineEditor /> }
       <SubscriptionModal
         isOpen={showPremiumModal}
         onClose={setShowPremiumModal}

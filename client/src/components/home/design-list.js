@@ -36,25 +36,26 @@ function DesignList({
   return (
     <div
       className={`${
-        isModalView ? "p-4" : ""
-      } grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4`}
+        isModalView ? "" : ""
+      } flex flex-wrap gap-6`}
+        // grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4
     >
       {(!listOfDesigns || !listOfDesigns.length) && <h1>No Design Found!</h1>}
       { listOfDesigns && listOfDesigns.map((design) => (
-        <div key={design._id} className="group cursor-pointer">
+        <div key={design._id} className="group cursor-pointer w-[500px] border rounded-xl overflow-hidden shadow">
           <div
             onClick={() => {
               router.push(`/editor/${design.templateId}/${design?._id}`);
               isModalView ? setShowDesignsModal(false) : null;
             }}
-            className="w-[300px] h-[300px] rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md"
+            className="h-[300px] w-[500px] overflow-hidden transition-shadow group-hover:shadow-md"
           >
             {design?.canvasData && (
               <DesignPreview key={design._id} design={design} />
             )}
           </div>
-          <div className="flex justify-between">
-            <p className="font-bold text-sm truncate">{design.name}</p>
+          <div className="flex p-3 items-center justify-between">
+            <p className="font-bold text-xl truncate">{design.name}</p>
             <Trash2
               onClick={() => handleDeleteDesign(design?._id)}
               className="w-5 h-5 "

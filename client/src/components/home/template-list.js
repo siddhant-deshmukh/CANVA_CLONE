@@ -65,7 +65,7 @@ function TemplateList({
     >
       {!listOfTemplates.length && <h1>No Templates Found!</h1>}
       {listOfTemplates.map((design) => (
-        <div key={design._id} className="group cursor-pointer">
+        <div key={design._id} className="group cursor-pointer w-[500px] rounded-xl overflow-hidden border shadow">
           <div
             onClick={() => {
               if(createDesign) {
@@ -75,14 +75,14 @@ function TemplateList({
                 isModalView ? setShowDesignsModal(false) : null;
               }
             }}
-            className="w-[300px] h-[300px] rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md"
+            className="w-[500px] h-[300px] overflow-hidden transition-shadow group-hover:shadow-md"
           >
             {design?.canvasData && (
               <DesignPreview key={design._id} design={design} />
             )}
           </div>
-          <div className="flex justify-between">
-            <p className="font-bold text-sm truncate">{design.name}</p>
+          <div className="flex items-center p-3 justify-between">
+            <p className="font-bold text-xl truncate">{design.name}</p>
             <Trash2
               onClick={() => handleDeleteTemplate(design?._id)}
               className="w-5 h-5 "

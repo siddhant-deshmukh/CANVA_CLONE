@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
+
+const CANVAS_WIDTH = 500;
+const CANVAS_HEIGHT = 300;
+
 function DesignPreview({ design }) {
   const [canvasId] = useState(`canvas-${design._id}-${Date.now()}`);
   const fabricCanvasRef = useRef(null);
@@ -27,8 +31,8 @@ function DesignPreview({ design }) {
         if (!canvasElement) return;
 
         const designPreviewCanvas = new fabric.StaticCanvas(canvasId, {
-          width: 300,
-          height: 300,
+          width: CANVAS_WIDTH,
+          height: CANVAS_HEIGHT,
           renderOnAddRemove: true,
         });
 
@@ -89,8 +93,8 @@ function DesignPreview({ design }) {
   return (
     <canvas
       id={canvasId}
-      width="300"
-      height="300"
+      width={`${CANVAS_WIDTH}`}
+      height={`${CANVAS_HEIGHT}`}
       className="h-full w-full object-contain"
     />
   );

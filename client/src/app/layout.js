@@ -3,6 +3,8 @@ import "./globals.css";
 import NextAuthProvider from "@/providers/nextauth-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
+import Header from "@/components/home/header";
+import SideBar from "@/components/home/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

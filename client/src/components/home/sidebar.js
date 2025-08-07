@@ -2,7 +2,8 @@
 
 import { saveDesign } from "@/services/design-service";
 import { useEditorStore } from "@/store";
-import { CreditCard, FolderOpen, Home, Plus } from "lucide-react";
+import { CreditCard, FolderOpen, Home, Plus, Edit3Icon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function SideBar() {
@@ -48,35 +49,48 @@ function SideBar() {
           {
             icon: <Home className="h-6 w-6" />,
             label: "Home",
+            link: '/',
             active: true,
           },
           {
-            icon: <FolderOpen className="h-6 w-6" />,
-            label: "Projects",
-            active: false,
+            icon: <Edit3Icon className="h-6 w-6" />,
+            label: "Design",
+            active: true,
+            link: '/editor'
           },
-          {
-            icon: <CreditCard className="h-6 w-6" />,
-            label: "Billing",
-            active: false,
-          },
+          // {
+          //   icon: <FolderOpen className="h-6 w-6" />,
+          //   label: "Projects",
+          //   active: false,
+          // },
+          // {
+          //   icon: <CreditCard className="h-6 w-6" />,
+          //   label: "Billing",
+          //   active: false,
+          // },
         ].map((menuItem, index) => (
-          <div
-            onClick={
-              menuItem.label === "Billing"
-                ? () => setShowPremiumModal(true)
-                : menuItem.label === "Projects"
-                ? () => setShowDesignsModal(true)
-                : null
-            }
+          // onClick={
+          //     // menuItem.label === "Billing"
+          //     //   ? () => setShowPremiumModal(true)
+          //     //   : menuItem.label === "Projects"
+          //     //   ? () => setShowDesignsModal(true)
+          //     //   : menuItem.label === "Home"
+          //     //   ? () => router.push('/')
+          //     //   : null
+          //     ()=> {
+          //       if(menuItem.link) { router.push(menuItem.link) }
+          //     }
+          //   }
+          <Link
             key={index}
+            href={menuItem.link}
             className="flex cursor-pointer flex-col items-center w-full"
           >
             <div className="w-full flex flex-col items-center py-2 text-gray-600 hover:bg-gray-100 hover:text-purple-600">
               <div className="relative">{menuItem.icon}</div>
               <span className="text-xs font-medium mt-1">{menuItem.label}</span>
             </div>
-          </div>
+          </Link>
         ))}
       </nav>
     </aside>
