@@ -29,7 +29,9 @@ function DesignList({
     }
   };
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <Loader className="animate-spin" />;
+
+  console.log('listOfDesigns', listOfDesigns)
 
   return (
     <div
@@ -37,12 +39,12 @@ function DesignList({
         isModalView ? "p-4" : ""
       } grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4`}
     >
-      {!listOfDesigns.length && <h1>No Design Found!</h1>}
-      {listOfDesigns.map((design) => (
+      {(!listOfDesigns || !listOfDesigns.length) && <h1>No Design Found!</h1>}
+      { listOfDesigns && listOfDesigns.map((design) => (
         <div key={design._id} className="group cursor-pointer">
           <div
             onClick={() => {
-              router.push(`/editor/${design?._id}`);
+              router.push(`/editor/${design.templateId}/${design?._id}`);
               isModalView ? setShowDesignsModal(false) : null;
             }}
             className="w-[300px] h-[300px] rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md"

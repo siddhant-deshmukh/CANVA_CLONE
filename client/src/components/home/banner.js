@@ -25,26 +25,28 @@ function Banner() {
     }
     if (loading) return;
     try {
-      setLoading(true);
+      router.push(`/editor`);
 
-      const initialDesignData = {
-        name: "Untitled design - Youtube Thumbnail",
-        canvasData: null,
-        width: 825,
-        height: 465,
-        category: "youtube_thumbnail",
-      };
+      // setLoading(true);
 
-      const newDesign = await saveDesign(initialDesignData);
+      // const initialDesignData = {
+      //   name: "Untitled design - Youtube Thumbnail",
+      //   canvasData: null,
+      //   width: 825,
+      //   height: 465,
+      //   category: "youtube_thumbnail",
+      // };
 
-      if (newDesign?.success) {
-        router.push(`/editor/${newDesign?.data?._id}`);
-        setLoading(false);
-      } else {
-        throw new Error("Failed to create new design");
-      }
+      // const newDesign = await saveDesign(initialDesignData);
 
-      console.log(newDesign, "newDesign");
+      // if (newDesign?.success) {
+      //   router.push(`/editor/${newDesign?.data?._id}`);
+      //   setLoading(false);
+      // } else {
+      //   throw new Error("Failed to create new design");
+      // }
+
+      // console.log(newDesign, "newDesign");
     } catch (e) {
       console.log(e);
       setLoading(false);

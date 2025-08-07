@@ -1,7 +1,7 @@
 "use client";
 
 import { centerCanvas } from "@/fabric/fabric-utils";
-import { saveCanvasState } from "@/services/design-service";
+import { saveCanvasState, saveCanvasTemplateState } from "@/services/design-service";
 import { debounce } from "lodash";
 import { create } from "zustand";
 
@@ -14,8 +14,14 @@ export const useEditorStore = create((set, get) => ({
     }
   },
 
+  isAdmin: false,
+  setIsAdmin: (boolean) => set({ isAdmin: boolean }),
+
   designId: null,
   setDesignId: (id) => set({ designId: id }),
+  
+  templateId: null,
+  setTemplateId: (id) => set({ templateId: id }),
 
   isEditing: true,
   setIsEditing: (flag) => set({ isEditing: flag }),
@@ -33,6 +39,7 @@ export const useEditorStore = create((set, get) => ({
 
   markAsModified: () => {
     const designId = get().designId;
+    const templateId = get().templateId;
 
     if (designId) {
       set({
@@ -42,22 +49,36 @@ export const useEditorStore = create((set, get) => ({
       });
 
       get().debouncedSaveToServer();
+    } else if (templateId) {
+      set({
+        lastModified: Date.now(),
+        saveStatus: "Saving...",
+        isModified: true,
+      });
+
+      get().debouncedSaveToServer();
     } else {
-      console.error("No design ID Available");
+      console.error("markAsModified, No design ID Available");
     }
   },
 
   saveToServer: async () => {
     const designId = get().designId;
+    const templateId = get().templateId;
     const canvas = get().canvas;
 
-    if (!canvas || !designId) {
+    if (!canvas) {
       console.log("No design ID Available or canvas instance is not available");
       return null;
     }
 
     try {
-      const savedDesign = await saveCanvasState(canvas, designId, get().name);
+      let savedDesign;
+      if(designId && templateId) {
+        savedDesign = await saveCanvasState(canvas, designId, templateId, get().name);
+      } else if (templateId) {
+        savedDesign = await saveCanvasTemplateState(canvas, templateId, get().name);
+      }
 
       set({
         saveStatus: "Saved",
@@ -84,6 +105,12 @@ export const useEditorStore = create((set, get) => ({
   userDesignsLoading: false,
   setUserDesignsLoading: (flag) => set({ userDesignsLoading: flag }),
 
+  userTemplates: [],
+  setUserTemplates: (data) => set({ userTemplates: data }),
+
+  userTemplatesLoading: false,
+  setUserTemplatesLoading: (flag) => set({ userTemplatesLoading: flag }),
+
   showPremiumModal: false,
   setShowPremiumModal: (flag) => set({ showPremiumModal: flag }),
 
@@ -94,6 +121,7 @@ export const useEditorStore = create((set, get) => ({
     set({
       canvas: null,
       designId: null,
+      templateId: null,
       isEditing: true,
       name: "Untitled Design",
       showProperties: false,

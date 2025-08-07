@@ -6,7 +6,7 @@ import { getUserSubscription } from "@/services/subscription-service";
 import { useEditorStore } from "@/store";
 import { useEffect } from "react";
 
-export default function EditorPage() {
+export default function TemplatePage() {
   const { setUserSubscription, setUserDesigns } = useEditorStore();
 
   const fetchUserSubscription = async () => {

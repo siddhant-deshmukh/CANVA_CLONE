@@ -6,21 +6,23 @@ import Header from "./header";
 import Sidebar from "./sidebar";
 import { useCallback, useEffect, useState } from "react";
 import { useEditorStore } from "@/store";
-import { getUserDesignByID } from "@/services/design-service";
+import { getUserDesignByID, getUserTemplateByID } from "@/services/design-service";
 import Properties from "./properties";
 import SubscriptionModal from "../subscription/premium-modal";
 
 function MainEditor() {
   const params = useParams();
   const router = useRouter();
-  const designId = params?.slug;
+  const templateId = params?.template_id;
+  const designId = params?.design_id;
 
-  const [isLoading, setIsLoading] = useState(!!designId);
+  const [isLoading, setIsLoading] = useState(!!templateId);
   const [loadAttempted, setLoadAttempted] = useState(false);
   const [error, setError] = useState(null);
 
   const {
     canvas,
+    setTemplateId,
     setDesignId,
     resetStore,
     setName,
@@ -35,10 +37,10 @@ function MainEditor() {
     //reset the store
     resetStore();
 
-    //set the design id
+    //set the template id
 
+    if (templateId) setTemplateId(templateId);
     if (designId) setDesignId(designId);
-
     return () => {
       resetStore();
     };
@@ -47,10 +49,10 @@ function MainEditor() {
   useEffect(() => {
     setLoadAttempted(false);
     setError(null);
-  }, [designId]);
+  }, [templateId]);
 
   useEffect(() => {
-    if (isLoading && !canvas && designId) {
+    if (isLoading && !canvas && templateId) {
       const timer = setTimeout(() => {
         if (isLoading) {
           console.log("Canvas init timeout");
@@ -60,7 +62,7 @@ function MainEditor() {
 
       return () => clearTimeout(timer);
     }
-  }, [isLoading, canvas, designId]);
+  }, [isLoading, canvas, templateId]);
 
   useEffect(() => {
     if (canvas) {
@@ -68,37 +70,53 @@ function MainEditor() {
     }
   }, [canvas]);
 
-  //load the design ->
-  const loadDesign = useCallback(async () => {
-    if (!canvas || !designId || loadAttempted) return;
+  //load the template ->
+  const loadTemplate = useCallback(async () => {
+    if (!canvas || !templateId || loadAttempted) return;
     try {
       setIsLoading(true);
       setLoadAttempted(true);
 
-      const response = await getUserDesignByID(designId);
-      const design = response.data;
+      let template;
 
-      if (design) {
+      if (designId) {
+        let response = await getUserDesignByID(designId);
+        console.log('get design by ID', response)
+        template = response.data;
+        if (!template || !template.canvasData) {
+          let response = await getUserTemplateByID(templateId);
+          console.log('get template by ID', response)
+          template = response.data;
+        }
+      } else {
+        let response = await getUserTemplateByID(templateId);
+        console.log('get template by ID', response)
+        template = response.data;
+      }
+
+
+      if (template) {
         //update name
-        setName(design.name);
+        setName(template.name);
 
-        //set the design ID just incase after getting the data
-        setDesignId(designId);
+        //set the template ID just incase after getting the data
+        if(templateId) setTemplateId(templateId);
+        if(designId) setDesignId(designId);
 
         try {
-          if (design.canvasData) {
+          if (template.canvasData) {
             canvas.clear();
-            if (design.width && design.height) {
+            if (template.width && template.height) {
               canvas.setDimensions({
-                width: design.width,
-                height: design.height,
+                width: template.width,
+                height: template.height,
               });
             }
 
             const canvasData =
-              typeof design.canvasData === "string"
-                ? JSON.parse(design.canvasData)
-                : design.canvasData;
+              typeof template.canvasData === "string"
+                ? JSON.parse(template.canvasData)
+                : template.canvasData;
 
             const hasObjects =
               canvasData.objects && canvasData.objects.length > 0;
@@ -115,13 +133,35 @@ function MainEditor() {
             }
 
             canvas
-              .loadFromJSON(design.canvasData)
-              .then((canvas) => canvas.requestRenderAll());
+              .loadFromJSON(template.canvasData)
+              .then((canvas) => {
+                canvas.requestRenderAll();
+                if(designId){
+                  canvas.forEachObject(function (obj) {
+                    // obj.selectable = false;
+                    // obj.evented = false;
+                    if(obj.type !== "i-text") {
+                      obj.lockMovementX = true;
+                      obj.lockMovementY = true;
+                      obj.lockScalingX = true;
+                      obj.lockScalingY = true;
+                      obj.lockRotation = true;
+                      obj.hasControls = false;
+                      obj.hoverCursor = 'pointer';
+                      obj.moveCursor = 'pointer';
+                    } else {
+                      obj.hoverCursor = 'move';  
+                      obj.moveCursor = 'move';
+                    }
+                    obj.hasBorders = true;
+                  });
+                }
+              });
           } else {
             console.log("no canvas data");
             canvas.clear();
-            canvas.setWidth(design.width);
-            canvas.setHeight(design.height);
+            canvas.setWidth(template.width);
+            canvas.setHeight(template.height);
             canvas.backgroundColor = "#ffffff";
             canvas.renderAll();
           }
@@ -132,22 +172,20 @@ function MainEditor() {
           setIsLoading(false);
         }
       }
-
-      console.log(response);
     } catch (e) {
-      console.error("Failed to load design", e);
-      setError("failed to load design");
+      console.error("Failed to load template", e);
+      setError("failed to load template");
       setIsLoading(false);
     }
-  }, [canvas, designId, loadAttempted, setDesignId]);
+  }, [canvas, templateId, designId, setTemplateId, loadAttempted, setDesignId]);
 
   useEffect(() => {
-    if (designId && canvas && !loadAttempted) {
-      loadDesign();
-    } else if (!designId) {
+    if (templateId && canvas && !loadAttempted) {
+      loadTemplate();
+    } else if (!templateId) {
       router.replace("/");
     }
-  }, [canvas, designId, loadDesign, loadAttempted, router]);
+  }, [canvas, templateId, loadTemplate, loadAttempted, router]);
 
   useEffect(() => {
     if (!canvas) return;
@@ -181,7 +219,7 @@ function MainEditor() {
     <div className="flex flex-col h-screen overflow-hidden">
       <Header />
       <div className="flex flex-1 overflow-hidden">
-        {isEditing && <Sidebar />}
+        {isEditing && !designId && <Sidebar />}
 
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <main className="flex-1 overflow-hidden bg-[#f0f0f0] flex items-center justify-center">
@@ -189,7 +227,7 @@ function MainEditor() {
           </main>
         </div>
       </div>
-      {showProperties && isEditing && <Properties />}
+      {showProperties && !designId && isEditing  && <Properties />}
       <SubscriptionModal
         isOpen={showPremiumModal}
         onClose={setShowPremiumModal}

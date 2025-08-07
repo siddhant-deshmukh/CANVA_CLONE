@@ -2,27 +2,30 @@
 
 import AiFeatures from "@/components/home/ai-features";
 import Banner from "@/components/home/banner";
-import DesignTypes from "@/components/home/design-types";
+import TemplateTypes from "@/components/home/template-types";
 import DesignModal from "@/components/home/designs-modal";
 import Header from "@/components/home/header";
 import RecentDesigns from "@/components/home/recent-designs";
 import SideBar from "@/components/home/sidebar";
 import SubscriptionModal from "@/components/subscription/premium-modal";
-import { getUserDesigns } from "@/services/design-service";
+import { getUserDesigns, getUserTemplates } from "@/services/design-service";
 import { getUserSubscription } from "@/services/subscription-service";
 import { useEditorStore } from "@/store";
 import { useEffect } from "react";
+import RecentTemplates from "@/components/home/recent-templates";
 
 export default function Home() {
   const {
     setUserSubscription,
     setUserDesigns,
+    setUserTemplates,
     showPremiumModal,
     setShowPremiumModal,
     showDesignsModal,
     setShowDesignsModal,
     userDesigns,
     setUserDesignsLoading,
+    setUserTemplatesLoading,
     userDesignsLoading,
   } = useEditorStore();
 
@@ -42,9 +45,20 @@ export default function Home() {
     }
   }
 
+  async function fetchUserTemplates() {
+    setUserTemplatesLoading(true);
+    const result = await getUserTemplates();
+
+    if (result?.success) {
+      setUserTemplates(result?.data);
+      setUserTemplatesLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchUserSubscription();
     fetchUserDesigns();
+    fetchUserTemplates();
   }, []);
 
   return (
@@ -54,9 +68,9 @@ export default function Home() {
         <Header />
         <main className="flex-1 p-6 overflow-y-auto pt-20">
           <Banner />
-          <DesignTypes />
-          <AiFeatures />
-          <RecentDesigns />
+          <TemplateTypes />
+          {/* <AiFeatures /> */}
+          <RecentTemplates />
         </main>
       </div>
       <SubscriptionModal
