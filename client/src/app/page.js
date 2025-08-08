@@ -1,21 +1,20 @@
 "use client";
 
-import AiFeatures from "@/components/home/ai-features";
 import Banner from "@/components/home/banner";
 import TemplateTypes from "@/components/home/template-types";
 import DesignModal from "@/components/home/designs-modal";
 import Header from "@/components/home/header";
-import RecentDesigns from "@/components/home/recent-designs";
 import SideBar from "@/components/home/sidebar";
 import SubscriptionModal from "@/components/subscription/premium-modal";
 import { getUserDesigns, getUserTemplates } from "@/services/design-service";
 import { getUserSubscription } from "@/services/subscription-service";
 import { useEditorStore } from "@/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import RecentTemplates from "@/components/home/recent-templates";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DesignList from "@/components/home/design-list";
 import TemplateList from "@/components/home/template-list";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Home() {
   const {
@@ -33,6 +32,30 @@ export default function Home() {
     userTemplatesLoading,
     setUserTemplatesLoading,
   } = useEditorStore();
+
+  //* Tab / Design view switch tabs
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const initialTab = searchParams.get('tab');
+
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    console.log(searchParams, searchParams.get('tab'))
+    if(!searchParams.get('tab') || !["designs", "template"].includes(searchParams.get('tab'))) {
+      setActiveTab("designs")
+      router.push(`?tab=designs`);
+    } else {
+      setActiveTab(searchParams.get('tab'))
+    }
+
+    
+  }, [router, searchParams, initialTab]);
+
+  const handleTabChange = (value) => {
+    router.push(`?tab=${value}`);
+  };
 
   const fetchUserSubscription = async () => {
     const response = await getUserSubscription();
@@ -74,7 +97,8 @@ export default function Home() {
         <main className="flex-1 p-6 overflow-y-auto pt-20">
           <Banner />
           <Tabs
-            defaultValue="designs"
+            value={activeTab}
+            onValueChange={handleTabChange}
             className={"my-10"}
           >
             <TabsList>
