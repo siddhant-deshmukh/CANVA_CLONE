@@ -40,7 +40,6 @@ function AiPanel() {
       if (response && response?.data?.url) {
         setGeneratedContent(response?.data?.url);
       }
-      console.log(response);
     } catch (e) {
       console.error("Error generating image from AI");
       throw e;

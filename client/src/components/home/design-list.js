@@ -31,7 +31,6 @@ function DesignList({
 
   if (isLoading) return <Loader className="animate-spin" />;
 
-  console.log('listOfDesigns', listOfDesigns)
 
   return (
     <div

@@ -56,7 +56,6 @@ function MainEditor() {
     if (isLoading && !canvas && templateId) {
       const timer = setTimeout(() => {
         if (isLoading) {
-          console.log("Canvas init timeout");
           setIsLoading(false);
         }
       }, 5000);
@@ -82,23 +81,19 @@ function MainEditor() {
 
       if (designId) {
         let response = await getUserDesignByID(designId);
-        console.log('get design by ID', response)
         template = response.data;
         if (!template || !template.canvasData) {
           let response = await getUserTemplateByID(templateId);
-          console.log('get template by ID', response)
           template = response.data;
         } else {
           const templateCanvasDataObject = JSON.parse(template.canvasData);
           if (!Array.isArray(templateCanvasDataObject.objects) || templateCanvasDataObject.objects.length < 1) {
             let response = await getUserTemplateByID(templateId);
-            console.log('get template by ID', response)
             template = response.data;
           }
         }
       } else {
         let response = await getUserTemplateByID(templateId);
-        console.log('get template by ID', response)
         template = response.data;
       }
 

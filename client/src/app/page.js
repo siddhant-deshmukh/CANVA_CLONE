@@ -42,7 +42,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState(initialTab);
 
   useEffect(() => {
-    console.log(searchParams, searchParams.get('tab'))
+    // console.log(searchParams, searchParams.get('tab'))
     if(!searchParams.get('tab') || !["designs", "template"].includes(searchParams.get('tab'))) {
       setActiveTab("designs")
       router.push(`?tab=designs`);

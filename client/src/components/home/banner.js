@@ -13,7 +13,6 @@ function Banner() {
   const router = useRouter();
   const { userSubscription, userDesigns } = useEditorStore();
 
-  console.log(userSubscription, "userSubscription");
 
   const handleCreateNewDesign = async () => {
     if (userDesigns?.length >= 5 && !userSubscription.isPremium) {

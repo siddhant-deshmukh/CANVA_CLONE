@@ -27,7 +27,6 @@ function RecentDesigns() {
   async function fetchUserDesigns() {
     setUserDesignsLoading(true);
     const result = await getUserDesigns();
-    console.log("results designs", result, result.data);
     if (result.success) {
       setUserDesigns(result.data);
       setUserDesignsLoading(false);

@@ -261,7 +261,6 @@ const EditPropertiesInlineEditor = () => {
       const activeObject = canvas.getActiveObject();
 
       if (activeObject) {
-        console.log(activeObject.type, "activeObjecttype");
 
         setSelectedObject(activeObject);
         //update common properties
@@ -276,7 +275,6 @@ const EditPropertiesInlineEditor = () => {
 
           setText(activeObject.text || "");
           setFontSize(activeObject.fontSize || 24);
-          console.log(activeObject.fontFamily);
           setFontFamily(activeObject.fontFamily || "Arial");
           setFontWeight(activeObject.fontWeight || "normal");
           setFontStyle(activeObject.fontStyle || "normal");

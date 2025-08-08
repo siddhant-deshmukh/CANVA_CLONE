@@ -69,7 +69,6 @@ function Properties() {
       const activeObject = canvas.getActiveObject();
 
       if (activeObject) {
-        console.log(activeObject.type, "activeObjecttype");
 
         setSelectedObject(activeObject);
         //update common properties

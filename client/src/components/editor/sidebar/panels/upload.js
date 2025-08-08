@@ -25,7 +25,6 @@ function UploadPanel() {
     try {
       setIsLoading(true);
       const data = await fetchWithAuth("/v1/media/get");
-      console.log(data, "fetchUserUploads");
       setUserUploads(data?.data || []);
     } catch (e) {
       console.error(e);
@@ -49,7 +48,6 @@ function UploadPanel() {
 
       setUserUploads((prev) => [result?.data, ...prev]);
 
-      console.log(result);
     } catch (e) {
       console.error("Error while uploading the file");
     } finally {
