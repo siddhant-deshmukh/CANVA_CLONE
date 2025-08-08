@@ -1,4 +1,5 @@
 const Design = require("../models/design");
+const Template = require("../models/template");
 const PDFDocument = require('pdfkit');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const sharp = require('sharp');
@@ -136,7 +137,7 @@ exports.deleteDesign = async (req, res) => {
 exports.generatePrintReadyPDF = async (req, res) => {
   try {
     // Update to get designId from the request body
-    const { designId, settings } = req.body;
+    const { designId, settings, templateId } = req.body;
     let { canvasData } = req.body; // Keep for now, but will be overwritten if designId is present
 
     if (designId) {
@@ -146,6 +147,12 @@ exports.generatePrintReadyPDF = async (req, res) => {
         return res.status(404).json({ error: 'Design not found' });
       }
       canvasData = JSON.parse(design.canvasData);
+    } else if (templateId) {
+      const template = await Template.findById(templateId);
+      if (!template) {
+        return res.status(404).json({ error: 'template not found' });
+      }
+      canvasData = JSON.parse(template.canvasData);
     }
 
     // If canvasData is still null or undefined, return an error
@@ -270,31 +277,31 @@ exports.generatePrintReadyPDF = async (req, res) => {
 async function renderTextDirectlyToPDF(doc, objects, scale, offsetX, offsetY) {
   for (const obj of objects.filter(o => o.type === 'IText' || o.type === 'Text')) {
     if (!obj.visible) continue;
-    
+
     // Position and scale text
     const x = offsetX + (obj.left || 0) * scale;
     const y = offsetY + (obj.top || 0) * scale;
     const fontSize = (obj.fontSize || 16) * scale;
-    
+
     // Set font
     try {
       doc.font(obj.fontFamily || 'Helvetica');
     } catch {
       doc.font('Helvetica');
     }
-    
+
     doc.fontSize(fontSize);
     doc.fillColor(obj.fill || '#000000');
-    
+
     // Handle font weight and style
     if (obj.fontWeight === 'bold') {
-      try { doc.font(`${obj.fontFamily || 'Helvetica'}-Bold`); } catch {}
+      try { doc.font(`${obj.fontFamily || 'Helvetica'}-Bold`); } catch { }
     }
-    
+
     // Render text
     const lines = (obj.text || '').split('\n');
     const lineHeight = fontSize * (obj.lineHeight || 1.16);
-    
+
     lines.forEach((line, index) => {
       let textX = x;
       if (obj.textAlign === 'center') {
@@ -302,10 +309,10 @@ async function renderTextDirectlyToPDF(doc, objects, scale, offsetX, offsetY) {
       } else if (obj.textAlign === 'right') {
         textX = x + (obj.width || 0) * scale - doc.widthOfString(line);
       }
-      
-      doc.text(line, textX, y + (index * lineHeight), { 
+
+      doc.text(line, textX, y + (index * lineHeight), {
         lineBreak: false,
-        continued: false 
+        continued: false
       });
     });
   }

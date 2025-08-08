@@ -5,7 +5,9 @@ import { useEffect, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
-import { fetchWithAuth, uploadFileWithAuth } from "@/lib/fetcher";
+import { fetchWithAuth } from "@/services/base-service";
+import { uploadFileWithAuth } from "@/services/upload-service";
+// import { fetchWithAuth, uploadFileWithAuth } from "@/lib/fetcher";
 
 export default function MediaManager() {
   const [isUploading, setIsUploading] = useState(false);

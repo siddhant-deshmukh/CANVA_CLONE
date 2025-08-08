@@ -13,9 +13,14 @@ import { Download, Eye, Printer, Loader2 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import { useEditorStore } from '@/store';
 import { fetchWithAuth } from '@/services/base-service';
+import { useParams } from 'next/navigation';
 
 const DownloadAsPDF = ({ children }) => {
   const { canvas } = useEditorStore();
+  const params = useParams();
+  const templateId = params?.template_id;
+  const designId = params?.design_id;
+  
   const [open, setOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -114,22 +119,22 @@ const DownloadAsPDF = ({ children }) => {
     try {
       const canvasData = canvas.toDataURL('image/png', 1.0);
 
-      const response = await fetchWithAuth('/v1/designs/export-pdf', {
-        method: 'post',
-        data: {
-          canvasData,
+      const response = await fetchWithAuth('/v1/designs/pdf', {
+        method: 'POST',
+        body: {
+          // canvasData,
+          designId,
+          templateId,
           settings: {
             ...settings,
             fileName: 'design_print_ready'
           }
-        }
+        },
+        responseType: 'blob'
       });
 
       // Create blob from response data
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(response); // Use the response directly
       const link = document.createElement('a');
       link.href = url;
       link.download = `design_print_ready_${Date.now()}.pdf`;
@@ -269,11 +274,7 @@ const DownloadAsPDF = ({ children }) => {
             disabled={isExporting || !canvas}
             variant="outline"
           >
-            {isExporting ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Eye className="w-4 h-4 mr-2" />
-            )}
+            <Eye className="w-4 h-4 mr-2" />
             Quick Download (Web)
           </Button>
 

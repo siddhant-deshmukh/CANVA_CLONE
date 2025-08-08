@@ -22,6 +22,7 @@ export async function fetchWithAuth(endpoint, options = {}) {
       },
       data: options.body,
       params: options.params,
+      ...( options.responseType ? {responseType: options.responseType} : {}),
     });
 
     return response.data;

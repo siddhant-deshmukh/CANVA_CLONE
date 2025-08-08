@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutTemplateIcon, Home, Edit3Icon, ImageIcon } from "lucide-react";
+import { LayoutTemplateIcon, Home, Edit3Icon } from "lucide-react";
 
 function SideBar() {
 
@@ -19,13 +19,13 @@ function SideBar() {
             icon: <Edit3Icon className="h-6 w-6" />,
             label: "Design",
             active: true,
-            link: '?tab=designs'
+            link: '/?tab=designs'
           },
           {
             icon: <LayoutTemplateIcon className="h-6 w-6" />,
             label: "Template",
             active: true,
-            link: '?tab=template'
+            link: '/?tab=template'
           },
           // {
           //   icon: <ImageIcon className="h-6 w-6" />,
