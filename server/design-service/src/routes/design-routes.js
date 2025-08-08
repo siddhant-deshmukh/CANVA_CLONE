@@ -17,4 +17,6 @@ router.get("/:id", designController.getUserDesignsByID);
 router.post("/", designController.saveDesign);
 router.delete("/:id", designController.deleteDesign);
 
+router.post("/pdf", designController.generatePrintReadyPDF);
+
 module.exports = router;

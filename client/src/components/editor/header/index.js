@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import DownloadAsPDF from "../export/DownloadAsPdf";
 
 function Header() {
   const {
@@ -127,13 +128,14 @@ function Header() {
             <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-yellow-400 animate-pulse" />
           )}
         </button>
-        <button
-          onClick={handleExport}
-          className="header-button ml-3 relative"
-          title="Export"
-        >
-          <Download className="w-5 h-5" />
-        </button>
+        <DownloadAsPDF>
+          <button
+            className="header-button ml-3 relative"
+            title="Export"
+          >
+            <Download className="w-5 h-5" />
+          </button>
+        </DownloadAsPDF>
       </div>
       <div className="flex-1 flex justify-center max-w-md">
         <Input

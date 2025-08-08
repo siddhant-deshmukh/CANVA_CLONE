@@ -102,7 +102,7 @@ function Canvas() {
       className="relative w-full h-[600px] overflow-auto"
       ref={canvasContainerRef}
     >
-      <canvas ref={canvasRef} />
+      <canvas ref={canvasRef} id="the_main_canvas" />
     </div>
   );
 }
