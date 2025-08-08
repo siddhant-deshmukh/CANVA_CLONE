@@ -2,13 +2,14 @@ import axios from "axios";
 import { getSession } from "next-auth/react";
 import { fetchWithAuth } from "./base-service";
 
-const API_URL = process.env.API_URL || "http://localhost:5000";
+const API_URL = process.env.API_URL || "http://localhost:3079";
 
 export async function uploadFileWithAuth(file, metaData = {}) {
   const session = await getSession();
 
-  if (!session) {
-    throw new Error("Not authenticated");
+  if (!session || !session.idToken) {
+     await signOut();
+    // throw new Error("Not authenticated");
   }
 
   const formData = new FormData();
@@ -27,8 +28,13 @@ export async function uploadFileWithAuth(file, metaData = {}) {
     });
 
     return response.data;
-  } catch (e) {
-    throw new Error("Upload Failed");
+  } catch (error) {
+    console.error(error);
+    if(error && error.response && error.response.status == 401) {
+      await signOut();
+    } else {
+      toast.error('Something went wrong')
+    }
   }
 }
 

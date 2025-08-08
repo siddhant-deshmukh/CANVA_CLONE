@@ -1,13 +1,15 @@
 import axios from "axios";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
+import { toast } from "sonner";
 
 const API_URL = process.env.API_URL || "http://localhost:3079";
 
 export async function fetchWithAuth(endpoint, options = {}) {
   const session = await getSession();
 
-  if (!session) {
-    throw new Error("Not authenticated");
+  if (!session || !session.idToken) {
+    await signOut();
+    // throw new Error("Not authenticated");
   }
 
   try {
@@ -25,6 +27,10 @@ export async function fetchWithAuth(endpoint, options = {}) {
     return response.data;
   } catch (error) {
     console.error(endpoint, error);
-    throw new Error("Api request failed");
+    if(error && error.response && error.response.status == 401) {
+      await signOut();
+    } else {
+      toast.error('Something went wrong')
+    }
   }
 }
