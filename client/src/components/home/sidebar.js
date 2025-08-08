@@ -27,12 +27,12 @@ function SideBar() {
             active: true,
             link: '?tab=template'
           },
-          {
-            icon: <ImageIcon className="h-6 w-6" />,
-            label: "Images",
-            active: true,
-            link: '?tab=template'
-          }
+          // {
+          //   icon: <ImageIcon className="h-6 w-6" />,
+          //   label: "Images",
+          //   active: true,
+          //   link: '/media'
+          // }
         ].map((menuItem, index) => (
           <Link
             key={index}
