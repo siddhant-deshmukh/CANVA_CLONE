@@ -2,7 +2,7 @@
 
 import { saveDesign } from "@/services/design-service";
 import { useEditorStore } from "@/store";
-import { CreditCard, FolderOpen, Home, Plus, Edit3Icon } from "lucide-react";
+import { LayoutTemplateIcon, Home, Plus, Edit3Icon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -55,6 +55,12 @@ function SideBar() {
           {
             icon: <Edit3Icon className="h-6 w-6" />,
             label: "Design",
+            active: true,
+            link: '/editor'
+          },
+          {
+            icon: <LayoutTemplateIcon className="h-6 w-6" />,
+            label: "Template",
             active: true,
             link: '/editor'
           },

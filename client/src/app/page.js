@@ -13,6 +13,9 @@ import { getUserSubscription } from "@/services/subscription-service";
 import { useEditorStore } from "@/store";
 import { useEffect } from "react";
 import RecentTemplates from "@/components/home/recent-templates";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DesignList from "@/components/home/design-list";
+import TemplateList from "@/components/home/template-list";
 
 export default function Home() {
   const {
@@ -24,9 +27,11 @@ export default function Home() {
     showDesignsModal,
     setShowDesignsModal,
     userDesigns,
-    setUserDesignsLoading,
-    setUserTemplatesLoading,
     userDesignsLoading,
+    setUserDesignsLoading,
+    userTemplates,
+    userTemplatesLoading,
+    setUserTemplatesLoading,
   } = useEditorStore();
 
   const fetchUserSubscription = async () => {
@@ -68,9 +73,44 @@ export default function Home() {
         <Header />
         <main className="flex-1 p-6 overflow-y-auto pt-20">
           <Banner />
-          <TemplateTypes />
-          {/* <AiFeatures /> */}
-          <RecentTemplates />
+          <Tabs
+            defaultValue="designs"
+            className={"my-10"}
+          >
+            <TabsList>
+              <TabsTrigger value="template">
+                Templates
+              </TabsTrigger>
+              <TabsTrigger value="designs">
+                Designs
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="template" >
+              <TemplateTypes />
+              {/* <AiFeatures /> */}
+              <RecentTemplates />
+            </TabsContent>
+            <TabsContent value="designs" className={"flex flex-col gap-5"}>
+              <h2 className="text-xl font-bold mt-5">Choose a template</h2>
+              <TemplateList
+                listOfTemplates={
+                  userTemplates ? userTemplates.slice(0, 4) : []
+                }
+                isLoading={userTemplatesLoading}
+                isModalView={false}
+                createDesign={true}
+              />
+              <h2 className="text-xl font-bold">Recent Designs</h2>
+              <DesignList
+                listOfDesigns={
+                  userDesigns && userDesigns.length > 0 ? userDesigns.slice(0, 4) : []
+                }
+                isLoading={userDesignsLoading}
+                isModalView={false}
+              />
+            </TabsContent>
+          </Tabs>
+
         </main>
       </div>
       <SubscriptionModal

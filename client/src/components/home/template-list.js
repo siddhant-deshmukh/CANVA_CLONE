@@ -61,7 +61,7 @@ function TemplateList({
   return (
     <div
       className={`${isModalView ? "p-4" : ""
-        } grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4`}
+        } flex flex-wrap gap-4`}
     >
       {!listOfTemplates.length && <h1>No Templates Found!</h1>}
       {listOfTemplates.map((design) => (
